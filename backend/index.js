@@ -22,7 +22,7 @@ io.on("connection", (socket) => {
     console.log(`A user connected. Socket id: ${socket.id}`);
 
     socket.on("message", (data) => {
-        io.emit("data", data)
+        io.emit("data", data);
     });
 
     // socket.on("mouse", (e) => {
@@ -44,8 +44,37 @@ app.post("/", (req, res) => {
     res.json(req.body);
 })
 
-app.use("/api/user", router)
+app.use("/api/user", router);
 
 httpServer.listen(port, () => {
     console.log(`Le serveur écoute sur ${port}`);
 });
+
+import mongoose from "mongoose";
+
+mongoose.connect('mongodb://127.0.0.1:27017/test');
+
+const userSchema = {
+    name: String,
+    mail: String,
+    password: String,
+    isAdmin: Boolean,
+    isVerifies: Boolean,
+    age: Number
+}
+
+const User = mongoose.model('User', userSchema);
+
+const alex = new User({
+    nom: "Alex",
+    mail:"alex.zera@gmail.com",
+    password:"motdepasse",
+    isAdmin: true,
+    isVerifies: false,
+    age:28
+})
+
+const dbResponse = alex.save()
+dbResponse.then((data) => {
+    console.log(data)
+})
