@@ -96,6 +96,10 @@ io.on('connection', (socket) => {
     io.emit('update lobby', {
       players: game.players
     });
+
+    socket.on('chat', msg => {
+      io.emit('chat', msg);
+    });
   });
 
   socket.on("disconnect", (reason) => {
