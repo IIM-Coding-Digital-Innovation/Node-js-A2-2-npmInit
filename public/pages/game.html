@@ -10,16 +10,23 @@
 <body>
   <main>
       <div class="lobby">
-        <h2>Lobby</h2>
-      </div>
-      <div class="game hidden">
-        <ul class="players"></ul>
-        <div class="questionContainer">
-          <p class="question"></p>
-          <ul class="answers">
-
+        <div>
+          <h2>Lobby</h2>
+          <ul class="lobby__players">
           </ul>
         </div>
+      </div>
+      <div class="game hidden">
+        <div class="questionPart">
+          <div class="timer"></div>
+          <div class="questionContainer">
+            <p class="question"></p>
+            <ul class="answers">
+              
+            </ul>
+          </div>
+        </div>
+        <ul class="players"></ul>
       </div>
   </main>
   <script src="/socket.io/socket.io.js"></script>
@@ -38,6 +45,8 @@
     var socket = io();
     let questionEl = document.querySelector('p.question')
     let answersEl = document.querySelector('.answers')
+    let timerEl = document.querySelector('.timer')
+    let timerIntervalId;
 
     socket.on('connect', () => {
       console.log('open')
@@ -48,6 +57,14 @@
 
     socket.on('update lobby', (msg) => {
       console.log(msg.players)
+      let lobbyUlEl = document.querySelector('.lobby__players')
+      while(lobbyUlEl.firstElementChild) lobbyUlEl.firstElementChild.remove()
+      msg.players.forEach(player => {
+        li = document.createElement('li')
+        li.classList ='lobby__players--player'
+        li.textContent = player.playername
+        lobbyUlEl.appendChild(li)
+      })
     });
 
     socket.on('instruction', (msg) => {
@@ -83,16 +100,23 @@
       while(answersEl.firstElementChild) answersEl.firstElementChild.remove()
       msg.answers.forEach(answer => {
         let li = document.createElement('li')
-        li.textContent = answer
-        li.classList = 'answer'
-        li.addEventListener('click', () => {
+        let btn = document.createElement('button')
+        btn.textContent = answer
+        btn.classList = 'answer'
+        btn.addEventListener('click', () => {
           socket.emit('answer', {
             playerId: sessionStorage.getItem('playerId'),
             answer: answer
           })
         })
+        li.appendChild(btn)
         answersEl.appendChild(li)
       })
+      if(timerIntervalId) clearInterval(timerIntervalId)
+      timerEl.textContent = 10
+      timerIntervalId = setInterval(() => {
+        timerEl.textContent = parseInt(timerEl.textContent) - 1
+      }, 1000)
     })
 
     socket.on('update players', (msg) => {
