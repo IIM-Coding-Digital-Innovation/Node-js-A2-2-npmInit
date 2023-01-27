@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/css/game.css">
+</head>
+<body>
+  <main>
+      <div class="lobby">
+        <h2>Lobby</h2>
+      </div>
+      <div class="game hidden">
+        <ul class="players"></ul>
+        <div class="questionContainer">
+          <p class="question"></p>
+          <div class="answers">
+
+          </div>
+        </div>
+      </div>
+  </main>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    function updatePlayers() {
+      players.forEach(player => {
+        
+      });
+    }
+    let players;
+    let playersContainer = document.querySelector('.players')
+    var socket = io();
+
+    socket.on('connect', () => {
+      console.log('open')
+      socket.emit('join', {
+        playerId: sessionStorage.getItem('playerId')
+      })
+    })
+
+    socket.on('update lobby', (msg) => {
+      console.log(msg.players)
+    });
+
+    socket.on('instruction', (msg) => {
+      switch(msg.task) {
+        case 'REDIRECT': location.href = location.origin
+      }
+    });
+
+    socket.on('start game', (msg) => {
+      console.log('start game')
+      players = msg.players
+      document.querySelector('.lobby').classList.add('hidden')
+      document.querySelector('.game').classList.remove('hidden')
+      console.log(players)
+      players.forEach((player, index) => {
+        li = document.createElement('li')
+        li.classList ='player'
+        li.textContent = player.playername
+        // document.body.style.setProperty(`--hp`, 'blue');
+        document.body.style.setProperty(`--hp-${player.id}`, player.hp + '%');
+        document.body.style.setProperty(`--rank-${player.id}`, index);
+        li.style.transform = `translateY(calc(2rem * var(--rank-${player.id}) + 0.5rem * var(--rank-${player.id})))`
+        li.style.width = `var(--hp-${player.id})`
+        playersContainer.appendChild(li)
+      })
+      
+    });
+  </script>
+</body>
+</html>

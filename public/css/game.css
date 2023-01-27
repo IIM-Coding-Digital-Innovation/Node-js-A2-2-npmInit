@@ -1,0 +1,37 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.lobby {
+  
+}
+
+.game {
+  min-height: 100vh;
+  position: relative;
+}
+
+.game .players {
+  position: absolute;
+  width: 200px;
+  border: solid;
+  height: 100%;
+  top: 0.5rem;
+  right: 0;
+}
+
+.game .players .player {
+  list-style: none;
+  border: solid 1px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 2rem;
+  transition: 1s;
+}
+
+.hidden {
+  display: none;
+}
