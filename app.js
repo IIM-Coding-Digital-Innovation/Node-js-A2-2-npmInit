@@ -54,9 +54,14 @@ app.get('/game/start', (req, res) => {
     players: game.players
   })
 
-  setInterval(() => {
+  setTimeout(() => {
     io.emit('question', game.question())
-  }, game.answerDelta)
+
+    game.setIntervalId = setInterval(() => {
+      io.emit('question', game.question())
+    }, game.answerDelta)
+  }, 3000)
+
 })
 
 app.post('/player', (req, res) => {
@@ -100,6 +105,13 @@ io.on('connection', (socket) => {
     io.emit('update lobby', {
       players: game.players.filter(player => player.socketId)
     });
+  });
+
+  socket.on("answer", msg => {
+    let doIEmit = game.verifyAnswer(msg)
+    if(doIEmit) io.emit('update players', {
+                  players: game.players
+                })
   });
 });
 
