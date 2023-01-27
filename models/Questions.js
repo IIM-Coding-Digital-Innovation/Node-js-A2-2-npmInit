@@ -28,7 +28,7 @@ module.exports = class Questions {
       id: 5,
       question: "Aux USA, quelle est la principale base de lancement d'engins spatiaux ?",
       good: "Cap Canaveral",
-      bads: ["Rousseau", "Shakespeare", "Victor Hugo"]
+      bads: ["Wallops Flight Facility", "Mid-Atlantic Regional Spaceport", "Centre spatial Kennedy"]
     },
     {
       id: 6,

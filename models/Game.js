@@ -31,7 +31,7 @@ module.exports = class Game {
 
   verifyAnswer(answer) {
     let player = this.players.find(player => player.id === answer.playerId)
-    if(!player) return
+    if(!player) return false
     if(player.answerState !== null) return
     let question = this.submitedQuestions[this.submitedQuestions.length - 1]
     let answers = question.bads
@@ -65,7 +65,7 @@ module.exports = class Game {
   resetAnswerState() {
     this.players.forEach(player => player.answerState = null)
   }
-
+  
   verifyFinish() {
     return this.players.filter(player => player.hp > 0).length <= 1
   }

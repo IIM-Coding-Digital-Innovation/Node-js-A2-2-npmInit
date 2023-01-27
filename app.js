@@ -28,6 +28,7 @@ app.get('/admin', (req, res) => {
 })
 
 app.get('/game/reset', (req, res) => {
+  clearInterval(game.setIntervalId)
   game = new Game()
   console.log(game)
   res.send('game reset')
@@ -114,6 +115,18 @@ io.on('connection', (socket) => {
 
   socket.on("answer", msg => {
     let doIEmit = game.verifyAnswer(msg)
+    
+    if(doIEmit) { // bonne rep
+      socket.emit('answer result',{
+        isGood: true,
+        respTxt: msg.answer
+      })
+    } else { // mauvaise rep
+      socket.emit('answer result',{
+        isGood: false,
+        respTxt: msg.answer
+      })
+    }
     if(doIEmit) {
       if(game.verifyFinish()) {
         clearInterval(game.setIntervalId)

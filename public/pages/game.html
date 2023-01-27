@@ -17,6 +17,12 @@
         </div>
       </div>
       <div class="game hidden">
+        <div>
+          <div id="messages"></div>
+          <form id="form">
+            <input id="input"/><button>Send</button>
+          </form>
+        </div>
         <div class="questionPart">
           <div class="timer"></div>
           <div class="questionContainer">
@@ -27,12 +33,6 @@
           </div>
         </div>
         <ul class="players"></ul>
-        <div>
-          <div id="messages"></div>
-          <form id="form">
-            <input id="input"/><button>Send</button>
-          </form>
-        </div>
       </div>
   </main>
   <script src="/socket.io/socket.io.js"></script>
@@ -53,6 +53,7 @@
     let answersEl = document.querySelector('.answers')
     let timerEl = document.querySelector('.timer')
     let timerIntervalId;
+    let hasAnswered;
 
     socket.on('connect', () => {
       console.log('open')
@@ -100,6 +101,7 @@
     });
 
     socket.on('question', (msg) => {
+      hasAnswered = false
       console.log('question')
       console.log(msg)
       questionEl.textContent = msg.question
@@ -110,6 +112,8 @@
         btn.textContent = answer
         btn.classList = 'answer'
         btn.addEventListener('click', () => {
+          if(hasAnswered) return
+          hasAnswered = true
           socket.emit('answer', {
             playerId: sessionStorage.getItem('playerId'),
             answer: answer
@@ -129,6 +133,18 @@
       console.log('update players', msg)
       players = msg.players
       updatePlayers()
+    })
+
+    socket.on('answer result', (msg) => {
+      console.log('answer result', msg)
+      let answersEls = Array.from(document.querySelectorAll('.answers li'))
+      console.log(answersEls)
+      let answer = answersEls.find(answerEl => answerEl.firstElementChild.textContent === msg.respTxt)
+      console.log(answer)
+      if(!answer) return
+      console.log(msg.isGood)
+      if(msg.isGood) answer.firstElementChild.classList.add('good')
+      else answer.firstElementChild.classList.add('bad')
     })
 
     var messages = document.getElementById('messages');

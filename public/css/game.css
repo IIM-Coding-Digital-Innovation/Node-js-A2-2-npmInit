@@ -139,3 +139,11 @@
 .hidden {
   display: none;
 }
+
+.good {
+  color: green;
+}
+
+.bad {
+  color: red;
+}
