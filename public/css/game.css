@@ -11,6 +11,20 @@
 .game {
   min-height: 100vh;
   position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.game .questionContainer .answers {
+  display: grid;
+  gap: 0.5;
+  grid-template-columns: 1fr 1fr;
+}
+
+.game .questionContainer .answers .answer {
+  padding: 1rem;
+  list-style: none;
+  font-size: 2rem;
 }
 
 .game .players {
@@ -18,7 +32,7 @@
   width: 200px;
   border: solid;
   height: 100%;
-  top: 0.5rem;
+  top: 0rem;
   right: 0;
 }
 

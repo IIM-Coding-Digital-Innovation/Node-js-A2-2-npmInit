@@ -58,6 +58,7 @@ app.get('/game/start', (req, res) => {
     io.emit('question', game.question())
 
     game.setIntervalId = setInterval(() => {
+      game.resetAnswerState()
       io.emit('question', game.question())
     }, game.answerDelta)
   }, 3000)
@@ -109,9 +110,20 @@ io.on('connection', (socket) => {
 
   socket.on("answer", msg => {
     let doIEmit = game.verifyAnswer(msg)
-    if(doIEmit) io.emit('update players', {
-                  players: game.players
-                })
+    if(doIEmit) {
+      if(game.verifyFinish()) {
+        clearInterval(game.setIntervalId)
+        io.emit('game end', {
+          players: game.players,
+          winner: game.getWinner()
+        })
+        game = new Game()
+      }
+    }
+    io.emit('update players', {
+      players: game.players
+    })
+      
   });
 });
 

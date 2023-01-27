@@ -61,4 +61,16 @@ module.exports = class Game {
       target.hp -= damages
     })
   }
+
+  resetAnswerState() {
+    this.players.forEach(player => player.answerState = null)
+  }
+
+  verifyFinish() {
+    return this.players.filter(player => player.hp > 0).length <= 1
+  }
+
+  getWinner() {
+    return this.players.find(player => player.hp > 0)
+  }
 }
