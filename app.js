@@ -1,15 +1,23 @@
-const { response } = require('express');
 const express = require('express');
+let cors = require('cors')
 const Game = require('./models/Game');
 const app = express()
 const http = require('http').Server(app);
-const io = require('socket.io')(http)
+// const io = require('socket.io')(http)
+const {Server} = require("socket.io");
+
+const io = new Server(http, {
+  cors: {
+      origin: "*"
+  }
+});
 
 const Player = require('./models/Player')
 const port = process.env.PORT || 3000
 
 let game = new Game()
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
