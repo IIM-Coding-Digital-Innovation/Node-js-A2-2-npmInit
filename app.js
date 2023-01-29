@@ -28,6 +28,7 @@ const Questions = require('./models/Questions');
 const port = process.env.PORT || 3000
 
 const auth = require('./middlewares/auth')
+const isAdmin = require('./middlewares/isAdmin')
 
 let game = new Game()
 
@@ -37,7 +38,7 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use(express.static('public'))
 
-app.get("/verify",auth, verif)
+app.get("/verify/:token",auth, verif)
 
 app.get('/', (req, res) => {
 	res.send('Hello World!')
@@ -64,7 +65,7 @@ app.post('/register', async (req, res) => {
 	}
 })
 
-app.get('/all-users', async (req, res) => {
+app.get('/all-users/:token', auth, isAdmin, async (req, res) => {
 	res.send( await getAllUsers());
 })
 

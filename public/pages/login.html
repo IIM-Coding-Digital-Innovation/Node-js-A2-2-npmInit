@@ -27,7 +27,6 @@
         },
         
     }).then(resp=>resp.json()).then(resp=>{
-        console.log(resp)
         if(resp.length < 60){
             document.querySelector('#error').innerHTML=resp
         }else{

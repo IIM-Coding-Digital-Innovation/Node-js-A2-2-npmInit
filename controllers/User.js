@@ -51,8 +51,9 @@ const login = async (req) => {
 }
 
 const verif = (req, res)=>{
-    res.status(200).json({message : 'Bonjour '+req.token.name})
+    res.status(200).json({Infos : req.token})
 }
+
 
 module.exports = {
     addUser,
