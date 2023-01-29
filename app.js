@@ -6,13 +6,17 @@ const http = require('http').Server(app);
 // const io = require('socket.io')(http)
 const { Server } = require("socket.io");
 
+const { User } = require("./models/User")
+const connect = require("./DBconnect")
+
+
 const io = new Server(http, {
 	cors: {
 		origin: "*"
 	}
 });
 
-const { UserController } = require("./controllers/User")
+const { addUser, getAllUsers, login } = require("./controllers/User")
 
 const Player = require('./models/Player');
 const Questions = require('./models/Questions');
@@ -45,13 +49,25 @@ app.get('/register', (req, res) => {
 })
 
 app.post('/register', async (req, res) => {
-	let result = await new UserController(req).addUser()
-	if(result[0]==400){
+	let result = await addUser(req)
+	if (result[0] == 400) {
 		res.status(400).json(result[1].message)
-	}else{
+	} else {
 		res.status(200).json(result)
 	}
 })
+
+app.get('/all-users', async (req, res) => {
+	res.send( await getAllUsers());
+})
+
+// app.get('/login', (req, res) => {
+// 	res.sendFile(__dirname + '/public/pages/login.html')
+// })
+
+// app.post('/login', async (req, res) => {
+// 	let result = await login(req)
+// })
 
 
 app.get('/game/reset', (req, res) => {
@@ -74,13 +90,13 @@ app.get('/game/start', (req, res) => {
 	game.players.push(new Player("p6"))
 	// for dev only
 
-  // start game
-  game.isStarted = true
-  res.send({ success: true })
-  console.log('start game ?')
-  io.emit('start game', {
-    players: game.players
-  })
+	// start game
+	game.isStarted = true
+	res.send({ success: true })
+	console.log('start game ?')
+	io.emit('start game', {
+		players: game.players
+	})
 
 	setTimeout(() => {
 		io.emit('question', game.question())
@@ -107,28 +123,28 @@ app.post('/player', (req, res) => {
 })
 
 app.post('/questioncommu', (req, res) => {
-  // const { question, good, bads } = req.body;
-  // const newQuestion = {
-  //   id: Questions.length + 1,
-  //   question,
-  //   good,
-  //   bads
-  // };
-  // Questions.push(newQuestion);
-  // console.log(Questions);
-  // res.send("Question ajoutée avec succès");
+	// const { question, good, bads } = req.body;
+	// const newQuestion = {
+	//   id: Questions.length + 1,
+	//   question,
+	//   good,
+	//   bads
+	// };
+	// Questions.push(newQuestion);
+	// console.log(Questions);
+	// res.send("Question ajoutée avec succès");
 
 
-  console.log(req.body);
+	console.log(req.body);
 
 
-//   let question = new Questions(req.body)
-//   const newQuestion = {
-//     id: Questions.length + 1,
-//     questionCommu,
-//     questionCommuGood,
-//     [questionCommuBad1, questionCommuBad2, questionCommuBad3],
-//   };
+	//   let question = new Questions(req.body)
+	//   const newQuestion = {
+	//     id: Questions.length + 1,
+	//     questionCommu,
+	//     questionCommuGood,
+	//     [questionCommuBad1, questionCommuBad2, questionCommuBad3],
+	//   };
 
 })
 
