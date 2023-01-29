@@ -1,0 +1,57 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
+  user-select: none;
+}
+
+main {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  background: #007aff;
+}
+
+main .inputbox {
+  display: flex;
+  gap: 2rem;
+}
+
+main .inputbox input {
+  padding: 1rem;
+  border: none;
+  outline: none;
+  font-size: 2rem;
+  border-radius: 1rem;
+}
+
+main .inputbox button {
+  padding: 1rem 2rem;
+  font-size: 2rem;
+  text-align: center;
+  background: #f2f2f2;
+  border-radius: 1rem;
+  box-shadow: 0 1rem 0 #d2d2d2;
+  border: none;
+  outline: none;
+  transition: 0.1s;
+  transform: translateY(-0.5rem);
+}
+
+main .inputbox button:active {
+  transform: translateY(0.5rem);
+  box-shadow: 0 0rem 0 #d2d2d2;
+}
+
+.divquestioncommu{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.dpnone{
+  display: none;
+}

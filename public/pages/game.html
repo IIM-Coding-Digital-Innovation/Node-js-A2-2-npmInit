@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/css/game.css">
+</head>
+<body>
+  <main>
+      <div class="lobby">
+        <div>
+          <h2>Lobby</h2>
+          <ul class="lobby__players">
+          </ul>
+        </div>
+      </div>
+      <div class="game hidden">
+        <div>
+          <div id="messages"></div>
+          <form id="form">
+            <input id="input"/><button>Send</button>
+          </form>
+        </div>
+        <div class="questionPart">
+          <div class="timer"></div>
+          <div class="questionContainer">
+            <p class="question"></p>
+            <ul class="answers">
+              
+            </ul>
+          </div>
+        </div>
+        <ul class="players"></ul>
+      </div>
+  </main>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    function updatePlayers() {
+      console.log(players)
+      console.log(players.sort((playerA,playerB) => playerA.hp - playerA.hp))
+      players.sort((playerA,playerB) => playerA.hp - playerB.hp).reverse().forEach((player, index) => {
+        console.log(index, player.playername)
+        document.body.style.setProperty(`--hp-${player.id}`, player.hp + '%');
+        document.body.style.setProperty(`--rank-${player.id}`, index);
+      });
+    }
+    let players;
+    let playersContainer = document.querySelector('.players')
+    var socket = io();
+    let questionEl = document.querySelector('p.question')
+    let answersEl = document.querySelector('.answers')
+    let timerEl = document.querySelector('.timer')
+    let timerIntervalId;
+    let hasAnswered;
+
+    socket.on('connect', () => {
+      console.log('open')
+      socket.emit('join', {
+        playerId: sessionStorage.getItem('playerId')
+      })
+    })
+
+    socket.on('update lobby', (msg) => {
+      console.log(msg.players)
+      let lobbyUlEl = document.querySelector('.lobby__players')
+      while(lobbyUlEl.firstElementChild) lobbyUlEl.firstElementChild.remove()
+      msg.players.forEach(player => {
+        li = document.createElement('li')
+        li.classList ='lobby__players--player'
+        li.textContent = player.playername
+        lobbyUlEl.appendChild(li)
+      })
+    });
+
+    socket.on('instruction', (msg) => {
+      switch(msg.task) {
+        case 'REDIRECT': location.href = location.origin
+      }
+    });
+
+    socket.on('start game', (msg) => {
+      console.log('start game')
+      players = msg.players
+      document.querySelector('.lobby').classList.add('hidden')
+      document.querySelector('.game').classList.remove('hidden')
+      console.log(players)
+      players.forEach((player, index) => {
+        li = document.createElement('li')
+        li.classList ='player'
+        li.textContent = player.playername
+        // document.body.style.setProperty(`--hp`, 'blue');
+        document.body.style.setProperty(`--hp-${player.id}`, player.hp + '%');
+        document.body.style.setProperty(`--rank-${player.id}`, index);
+        li.style.transform = `translateY(calc(2rem * var(--rank-${player.id}) + 0.5rem * var(--rank-${player.id})))`
+        li.style.width = `var(--hp-${player.id})`
+        playersContainer.appendChild(li)
+      })
+
+    });
+
+    socket.on('question', (msg) => {
+      hasAnswered = false
+      console.log('question')
+      console.log(msg)
+      questionEl.textContent = msg.question
+      while(answersEl.firstElementChild) answersEl.firstElementChild.remove()
+      msg.answers.forEach(answer => {
+        let li = document.createElement('li')
+        let btn = document.createElement('button')
+        btn.textContent = answer
+        btn.classList = 'answer'
+        btn.addEventListener('click', () => {
+          if(hasAnswered) return
+          hasAnswered = true
+          socket.emit('answer', {
+            playerId: sessionStorage.getItem('playerId'),
+            answer: answer
+          })
+        })
+        li.appendChild(btn)
+        answersEl.appendChild(li)
+      })
+      if(timerIntervalId) clearInterval(timerIntervalId)
+      timerEl.textContent = 10
+      timerIntervalId = setInterval(() => {
+        timerEl.textContent = parseInt(timerEl.textContent) - 1
+      }, 1000)
+    })
+
+    socket.on('update players', (msg) => {
+      console.log('update players', msg)
+      players = msg.players
+      updatePlayers()
+    })
+
+    socket.on('answer result', (msg) => {
+      console.log('answer result', msg)
+      let answersEls = Array.from(document.querySelectorAll('.answers li'))
+      console.log(answersEls)
+      let answer = answersEls.find(answerEl => answerEl.firstElementChild.textContent === msg.respTxt)
+      console.log(answer)
+      if(!answer) return
+      console.log(msg.isGood)
+      if(msg.isGood) answer.firstElementChild.classList.add('good')
+      else answer.firstElementChild.classList.add('bad')
+    })
+
+    var messages = document.getElementById('messages');
+    var form = document.getElementById('form');
+    var input = document.getElementById('input');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (input.value) {
+        socket.emit('chat', input.value);
+        input.value = '';
+      }
+    });
+
+    socket.on('chat', function(msg) {
+      var item = document.createElement('li');
+      item.textContent = msg;
+      messages.appendChild(item);
+    });
+  </script>
+</body>
+</html>

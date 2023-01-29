@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body>
+    <main>
+      <div class="inputbox">
+        <input type="text" name="playername" id="playername">
+        <button id="btgo">Go</button>
+      </div>
+      <div class="inputbox">
+        <button id="btquestioncommu">Contribuer</button>
+      </div>
+      <div class="dpnone divquestioncommu">
+        <form action="#" method="POST">
+          <div class="divquestioncommu">
+            <label for="">Proposer nous une question a ajouter</label>
+            <input type="text" name="questionCommu" id="questionCommu">
+          </div>
+          <div class="divquestioncommu">
+            <div class="divquestioncommu">
+              <label for="">Ici la bonne réponse</label>
+              <input type="text" name="questionCommuGood" id="questionCommuGood">
+            </div>
+            <div class="divquestioncommu">
+              <div>
+                <label for="">Ici les mauvaises réponses</label>
+              </div>
+              <div>
+                <input type="text" name="questionCommuBad1" id="questionCommuBad1">
+                <input type="text" name="questionCommuBad2" id="questionCommuBad2">
+                <input type="text" name="questionCommuBad3" id="questionCommuBad3">
+              </div>
+            </div>
+            <div class="inputbox">
+              <button id="envoyer" type="submit">Envoyer</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </main>
+    <script>
+      sessionStorage.clear();
+      document.querySelector('#btgo').addEventListener('click', (e) => {
+        fetch(location.origin + '/player', {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            playername: document.querySelector('#playername').value
+          })
+        }).then(resp => resp.json()).then(resp => {
+          if(!resp.success) return
+          sessionStorage.setItem('playerId', resp.playerId)
+          location.href = location.origin + '/game'
+        }
+      )})
+
+      document.querySelector('#btquestioncommu').addEventListener('click', () => {
+        let divquestioncommu = document.querySelector('.divquestioncommu')
+        divquestioncommu.classList.toggle('dpnone')
+      })
+
+      document.querySelector('#envoyer').addEventListener('click', () => {
+        fetch(location.origin + '/questioncommu', {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            questionCommu: document.querySelector('#questionCommu').value,
+            questionCommuGood: document.querySelector('#questionCommuGood').value,
+            questionCommuBad1: document.querySelector('#questionCommuBad1').value,
+            questionCommuBad2: document.querySelector('#questionCommuBad2').value,
+            questionCommuBad3: document.querySelector('#questionCommuBad3').value,
+          })
+        }).then(resp => resp.json()).then(resp => {
+          if(!resp.success) return
+          else{
+            alert("Question ajouté")
+          }
+        })
+      })
+    </script>
+  </body>
+</html>
