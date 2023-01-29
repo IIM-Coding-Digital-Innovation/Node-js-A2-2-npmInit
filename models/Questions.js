@@ -99,11 +99,16 @@ module.exports = class Questions {
 
     
   ]
-  constructor() {
-    // id 
-    // question
-    // good
-    // bads
+  constructor(req) {
+    this.id = id 
+    this.questionCommu = req.body.questionCommu
+    this.questionCommuGood = req.body.questionCommuGood
+    this.questionCommuBad = [
+      req.body.questionCommuBad1,
+      req.body.questionCommuBad2,
+      req.body.questionCommuBad3,
+    ]
+    isVerified = false
   }
 
   getRandomQuestion() {
