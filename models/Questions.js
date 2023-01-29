@@ -100,6 +100,10 @@ module.exports = class Questions {
     
   ]
   constructor() {
+    // id 
+    // question
+    // good
+    // bads
   }
 
   getRandomQuestion() {

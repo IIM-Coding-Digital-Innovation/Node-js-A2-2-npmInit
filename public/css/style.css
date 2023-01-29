@@ -43,3 +43,15 @@ main .inputbox button:active {
   transform: translateY(0.5rem);
   box-shadow: 0 0rem 0 #d2d2d2;
 }
+
+.divquestioncommu{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.dpnone{
+  display: none;
+}

@@ -5,7 +5,8 @@ const app = express()
 const http = require('http').Server(app);
 const io = require('socket.io')(http)
 
-const Player = require('./models/Player')
+const Player = require('./models/Player');
+const Questions = require('./models/Questions');
 const port = process.env.PORT || 3000
 
 let game = new Game()
@@ -50,7 +51,7 @@ app.get('/game/start', (req, res) => {
   // start game
   game.isStarted = true
   res.send({ success: true })
-  console.log('start gamùe ?')
+  console.log('start game ?')
   io.emit('start game', {
     players: game.players
   })
@@ -77,6 +78,24 @@ app.post('/player', (req, res) => {
     playerId: player.id
   })
   console.log('user add to loobby')
+})
+
+app.post('/questioncommu', (req, res) => {
+  // const { question, good, bads } = req.body;
+  // const newQuestion = {
+  //   id: Questions.length + 1,
+  //   question,
+  //   good,
+  //   bads
+  // };
+  // Questions.push(newQuestion);
+  // console.log(Questions);
+  // res.send("Question ajoutée avec succès");
+  console.log(req.body);
+
+  // let question = new Questions(req.body.questionCommu)
+  // console.log(question);
+  // console.log(req);
 })
 
 http.listen(port, () => {
