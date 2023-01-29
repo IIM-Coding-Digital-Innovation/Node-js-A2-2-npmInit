@@ -23,7 +23,8 @@ const UserSchema = mongoose.Schema({
             if(!validator.isLength(pass, {min:6, max:undefined})) throw new Error('Le mot de passe doit faire au moins six caractères')
         }
     },
-    isAdmin: Boolean
+    isAdmin: Boolean,
+    
 })
 
 UserSchema.plugin(uniqueValidator, { message: '{PATH} existe déjà' })

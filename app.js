@@ -10,19 +10,24 @@ const { User } = require("./models/User")
 const connect = require("./DBconnect")
 
 
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
+
 const io = new Server(http, {
 	cors: {
 		origin: "*"
 	}
 });
 
-const { addUser, getAllUsers, login } = require("./controllers/User")
+const { addUser, getAllUsers, login, verif } = require("./controllers/User")
 
 const Player = require('./models/Player');
 const Questions = require('./models/Questions');
+
 const port = process.env.PORT || 3000
 
-
+const auth = require('./middlewares/auth')
 
 let game = new Game()
 
@@ -31,6 +36,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 
 app.use(express.static('public'))
+
+app.get("/verify",auth, verif)
 
 app.get('/', (req, res) => {
 	res.send('Hello World!')
@@ -61,13 +68,19 @@ app.get('/all-users', async (req, res) => {
 	res.send( await getAllUsers());
 })
 
-// app.get('/login', (req, res) => {
-// 	res.sendFile(__dirname + '/public/pages/login.html')
-// })
+app.get('/login', (req, res) => {
+	res.sendFile(__dirname + '/public/pages/login.html')
+})
 
-// app.post('/login', async (req, res) => {
-// 	let result = await login(req)
-// })
+app.post('/login', async (req, res) => {
+	let resultat = await login(req)
+	if(resultat[0]==200){
+		res.setHeader('Authorization', 'Bearer '+resultat[1])
+		res.status(200).json(resultat[1])
+	}else{
+		res.status(401).json(resultat[1])
+	}
+})
 
 
 app.get('/game/reset', (req, res) => {
