@@ -9,11 +9,11 @@ const UserController = class{
         this.password = req.body.password
     }
 
-    addUser(){
+    async addUser(){
         try{
-            new User({name: this.name, mail :this.mail, password:this.password, isAdmin: false}).save()
+            await new User({name: this.name, mail :this.mail, password:this.password, isAdmin: false}).save()
         }catch(error){
-            return [400, error.message]
+            return [400, error]
         }
         return [200, "FAIT"]
     }
