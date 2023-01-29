@@ -43,8 +43,13 @@ app.get('/register', (req, res) => {
 	res.sendFile(__dirname + '/public/pages/register.html')
 })
 
-app.post('/register', (req, res) => {
-	res.send(new UserController(req).addUser())
+app.post('/register', async (req, res) => {
+	let result = await new UserController(req).addUser()
+	if(result[0]==400){
+		res.status(400).json(result[1].message)
+	}else{
+		res.status(200).json(result)
+	}
 })
 
 
