@@ -51,7 +51,7 @@ You can register to post questions who can be used later to create quiz
 
 #### Register user
 
-```http
+```
   POST /register
 ```
 
@@ -62,7 +62,7 @@ You can register to post questions who can be used later to create quiz
 | `password` | `string` | **Required**. Your password | 
 | `confPassword` | `string` | **Required**. The confirmation of your password | 
 
-```http
+```
   POST /login
 ```
 
