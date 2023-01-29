@@ -7,7 +7,7 @@ const http = require('http').Server(app);
 const { Server } = require("socket.io");
 
 const { User } = require("./models/User")
-
+const connect = require("./DBconnect")
 
 
 const io = new Server(http, {
